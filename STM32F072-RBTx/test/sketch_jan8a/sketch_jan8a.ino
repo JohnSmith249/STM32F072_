@@ -1,6 +1,6 @@
-#define encoder0PinA PB8
-#define encoder0PinB PB9
-#define SignPin PB5
+#define encoder0PinA PA8
+#define encoder0PinB PA9
+
 #include <Wire.h>
 #include <TM1650.h>
 
@@ -11,7 +11,6 @@ String value;
 String Sign = "-";
 HardwareSerial mySerial(PA10, PA9);
 TM1650 d;
-boolean but_status = 1;
 
 void Filter_data() {
   int first_digit = encoder0Pos / 100;
@@ -21,45 +20,36 @@ void Filter_data() {
   value.toCharArray(display_data, 5);
 }
 
-
 void setup() {
-
   pinMode(encoder0PinA, INPUT);
   pinMode(encoder0PinB, INPUT);
-  pinMode(SignPin, INPUT);
-
   attachInterrupt(encoder0PinA, doEncoderA, CHANGE);
   attachInterrupt(encoder0PinB, doEncoderB, CHANGE);
-  attachInterrupt(SignPin, resetStatus, FALLING);
   Wire.begin();
-  mySerial.begin(115200);
+  mySerial.begin(115200);  // Back up Serial Port for debug
+
   d.init();
   d.displayOff();
+  delay(200);
   d.displayString("____");
   d.setBrightness(TM1650_MIN_BRIGHT);
   d.displayOn();
-  delay(1000);
+  delay(200);
 }
 
 void loop() {
-  if (but_status == 0) {
-    reSign();
-    Filter_data();
-    d.displayString((display_data));
-  }
-  // mySerial.println(digitalRead(SignPin));
   if (encoder0Pos != encoder0Pos_old) {
     d.clear();
     if (encoder0Pos > 999) {
-      encoder0Pos = 999;
-      Filter_data();
-    } else if (encoder0Pos < 0) {
-      encoder0Pos = 0;
-      Filter_data();
+      value = Sign + "000";
+      value.toCharArray(display_data, 5);
+      d.displayString(display_data);
+      mySerial.println(display_data);
     } else {
       Filter_data();
+      d.displayString((display_data));
+      mySerial.println(display_data);
     }
-    d.displayString((display_data));
     encoder0Pos_old = encoder0Pos;
     d.displayOn();
     d.setBrightness(TM1650_MAX_BRIGHT);
@@ -67,35 +57,23 @@ void loop() {
 }
 
 void doEncoderA() {
-  // look for a low-to-high on channel A
   if (digitalRead(encoder0PinA) == HIGH) {
-
-    // check channel B to see which way encoder is turning
     if (digitalRead(encoder0PinB) == LOW) {
       encoder0Pos = encoder0Pos + 1;  // CW
     } else {
       encoder0Pos = encoder0Pos - 1;  // CCW
     }
-  }
-
-  else  // must be a high-to-low edge on channel A
-  {
-    // check channel B to see which way encoder is turning
+  } else {
     if (digitalRead(encoder0PinB) == HIGH) {
       encoder0Pos = encoder0Pos + 1;  // CW
     } else {
       encoder0Pos = encoder0Pos - 1;  // CCW
     }
   }
-
-  // use for debugging - remember to comment out
 }
 
 void doEncoderB() {
-  // look for a low-to-high on channel B
   if (digitalRead(encoder0PinB) == HIGH) {
-
-    // check channel A to see which way encoder is turning
     if (digitalRead(encoder0PinA) == HIGH) {
       encoder0Pos = encoder0Pos + 1;  // CW
     } else {
@@ -103,10 +81,7 @@ void doEncoderB() {
     }
   }
 
-  // Look for a high-to-low on channel B
-
   else {
-    // check channel B to see which way encoder is turning
     if (digitalRead(encoder0PinA) == LOW) {
       encoder0Pos = encoder0Pos + 1;  // CW
     } else {
@@ -115,21 +90,3 @@ void doEncoderB() {
   }
 }
 
-void resetStatus() {
-  mySerial.println("Trigger");
-  if (but_status == 1) {
-    but_status = 0;
-  }
-}
-
-void reSign() {
-  delay(90);
-  if (digitalRead(SignPin) != but_status && digitalRead(SignPin) == 1) {
-    if (Sign == "-") {
-      Sign = "0";
-    } else {
-      Sign = "-";
-    }
-    but_status = 1;
-  }
-}
