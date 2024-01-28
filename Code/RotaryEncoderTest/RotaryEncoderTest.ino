@@ -1,12 +1,10 @@
-#define encoder0PinA PB6
-#define encoder0PinB PB7
+#define encoder0PinA PB8
+#define encoder0PinB PB5
 #include <Wire.h>
-#include <TM1650.h>
 
 volatile int encoder0Pos = 0;
 volatile int encoder0Pos_old = 0;
-HardwareSerial mySerial(PA10, PA9);
-TM1650 d;
+HardwareSerial mySerial(PA1, PA0);
 
 void setup() {
 
@@ -20,10 +18,13 @@ void setup() {
   attachInterrupt(encoder0PinB, doEncoderB, CHANGE);
   Wire.begin();
   mySerial.begin(115200);
-  d.init();
+  delay(2000);
+  mySerial.println("Begin Test");
 }
 
 void loop() {
+  // mySerial.println("Run Here");
+  // mySerial.println(digitalRead(encoder0PinA));
   if (encoder0Pos != encoder0Pos_old) {
     if (encoder0Pos > 100000) {
       mySerial.println(0);
