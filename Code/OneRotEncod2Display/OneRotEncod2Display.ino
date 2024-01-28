@@ -1,7 +1,6 @@
 #define encoder0PinA PB8
 #define encoder0PinB PB5
 #define SignPin PB9
-#define ButtonPin PA11
 #include <Wire.h>
 #include <TM1650.h>
 #include <TM16xxDisplay.h>
@@ -51,7 +50,6 @@ void setup() {
   pinMode(encoder0PinA, INPUT);
   pinMode(encoder0PinB, INPUT);
   pinMode(SignPin, INPUT);
-  pinMode(ButtonPin, INPUT);
 
   attachInterrupt(encoder0PinA, doEncoderA, CHANGE);
   attachInterrupt(encoder0PinB, doEncoderB, CHANGE);
