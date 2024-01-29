@@ -1,14 +1,18 @@
 #include <Versatile_RotaryEncoder.h>
+<<<<<<< HEAD
 #include <FlashStorage_STM32.h>
 #include <Wire.h>
 #include <TM1650.h>
 #include <TM16xxDisplay.h>
+=======
+>>>>>>> 4c989665b95a53c504855d0f8b0c369e16e6741b
 
 #define clk PB8
 #define dt PB5
 #define sw PB9
 
 volatile int Pos = 0;
+<<<<<<< HEAD
 volatile int Write_Value;
 volatile int Read_Value;
 boolean But_stat = 0;
@@ -17,6 +21,11 @@ uint16_t address = 0;
 
 void handleRotate(int8_t rotation);
 void WriteData(int data);
+=======
+boolean But_stat = 0;
+
+void handleRotate(int8_t rotation);
+>>>>>>> 4c989665b95a53c504855d0f8b0c369e16e6741b
 // void handlePress();
 // void handleLongPress();
 // void handleDoublePress();
@@ -26,6 +35,7 @@ void WriteData(int data);
 HardwareSerial mySerial(PA1, PA0);
 Versatile_RotaryEncoder *versatile_encoder;
 
+<<<<<<< HEAD
 TM1650 display1(PA10, //SCL
                 PA9, //SDA
                 4,
@@ -41,6 +51,8 @@ TM1650 display2(PA10, //SCL
 TM16xxDisplay displayA(&display1, 4);
 TM16xxDisplay displayB(&display2, 4);
 
+=======
+>>>>>>> 4c989665b95a53c504855d0f8b0c369e16e6741b
 void setup() {
 
   mySerial.begin(115200);
@@ -110,6 +122,7 @@ void handlePress() {
 
 // void handleLongPressRelease() {
 // 	Serial.println("#7 Long press released");
+<<<<<<< HEAD
 // }
 
 void WriteData(uint16_t address, int data){
@@ -121,3 +134,6 @@ void ReadData(uint16_t address){
   EEPROM.get(address, number);
 }
 
+=======
+// }
+>>>>>>> 4c989665b95a53c504855d0f8b0c369e16e6741b
